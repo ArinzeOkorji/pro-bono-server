@@ -7,7 +7,7 @@
   "private":"true",
   "scripts": {
     "build": "npm-run-all clean transpile",
-    "start": "nodemon src/app.js",
+    "start": "npm-run-all prod",
     "server": "node ./dist/app.js",
     "transpile": "babel ./src --out-dir dist",
     "clean": "rimraf dist",
