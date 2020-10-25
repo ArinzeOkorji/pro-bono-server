@@ -15,7 +15,7 @@ mongoose.connect(process.env.MONODB_URI || local_db_for_development_url, {
 	useCreateIndex: true,
 	useFindAndModify: false
 });
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 
 // Models start
