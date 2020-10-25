@@ -1,6 +1,10 @@
 {
-  "name": "",
+  "name": "pro-bono",
   "version": "",
+  "engines": {
+    "node": "8.11.3"
+  },
+  "private":"true",
   "scripts": {
     "build": "npm-run-all clean transpile",
     "start": "nodemon src/app.js",

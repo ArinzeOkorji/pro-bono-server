@@ -8,8 +8,8 @@ import cors from "cors";
 import bodyParser from "body-parser";
 
 const app = express();
-
-mongoose.connect("mongodb://localhost:27017/pro-bono", {
+const local_db_for_development_url = "mongodb://localhost:27017/pro-bono";
+mongoose.connect(process.env.MONODB_URI || local_db_for_development_url, {
 	useNewUrlParser: true,
 	useUnifiedTopology: true,
 	useCreateIndex: true,
