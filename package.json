@@ -6,7 +6,7 @@
   },
   "private":"true",
   "scripts": {
-    "build": "cross-env NODE_ENV=production npm-run-all clean transpile server",
+    "build": "npm-run-all clean transpile",
     "start": "nodemon src/app.js",
     "server": "node ./dist/app.js",
     "transpile": "babel ./src --out-dir dist",
