@@ -17,7 +17,7 @@ mongoose.connect(mongoDB, {
 	useFindAndModify: false
 }).then(()=> {
 	console.log("Database Successfully Connected");},error =>{
-	console.log(error);});
+	console.log(`Mono Atlas: ${process.env.MONODB_URI}`,error);});
 const port = process.env.PORT || 3000;
 
 
