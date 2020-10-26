@@ -9,12 +9,15 @@ import bodyParser from "body-parser";
 
 const app = express();
 const local_db_for_development_url = "mongodb://localhost:27017/pro-bono";
-mongoose.connect(process.env.MONODB_URI || local_db_for_development_url, {
+const mongoDB = process.env.MONODB_URI || local_db_for_development_url;
+mongoose.connect(mongoDB, {
 	useNewUrlParser: true,
 	useUnifiedTopology: true,
 	useCreateIndex: true,
 	useFindAndModify: false
-});
+}).then(()=> {
+	console.log("Database Successfully Connected");},error =>{
+	console.log(error);});
 const port = process.env.PORT || 3000;
 
 
