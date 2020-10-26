@@ -9,7 +9,7 @@ import bodyParser from "body-parser";
 
 const app = express();
 const local_db_for_development_url = "mongodb://localhost:27017/pro-bono";
-const mongoDB = process.env.MONODB_URI || local_db_for_development_url;
+const mongoDB = process.env.MONGODB_URI || local_db_for_development_url;
 mongoose.connect(mongoDB, {
 	useNewUrlParser: true,
 	useUnifiedTopology: true,
@@ -17,7 +17,7 @@ mongoose.connect(mongoDB, {
 	useFindAndModify: false
 }).then(()=> {
 	console.log("Database Successfully Connected");},error =>{
-	console.log(`Mono Atlas: ${process.env.MONODB_URI}`,error);});
+	console.log(`Mono Atlas: ${process.env.MONGODB_URI}`,error);});
 const port = process.env.PORT || 3000;
 
 
