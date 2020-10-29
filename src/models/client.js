@@ -15,7 +15,7 @@ const Case = mongoose.model("Case", CasesSchema);
 const Client = new Schema({
 	userType: {
 		type: String,
-		default: "Client"
+		default: "client"
 	},
 	firstName: String,
 	lastName: String,

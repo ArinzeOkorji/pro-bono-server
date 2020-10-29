@@ -25,7 +25,7 @@ var Case = _mongoose["default"].model("Case", CasesSchema);
 var Client = new Schema({
   userType: {
     type: String,
-    "default": "Client"
+    "default": "client"
   },
   firstName: String,
   lastName: String,

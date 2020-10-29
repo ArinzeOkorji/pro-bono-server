@@ -71,7 +71,7 @@ router.get("/:id", auth.required, (req, res) => {
 				err: err
 			});
 		} else {
-			res.json(client);
+			return client;
 		}
 	}).then((client) => {
 		return [Case.find({}).exec(), client];
@@ -83,21 +83,76 @@ router.get("/:id", auth.required, (req, res) => {
 	}).then((data) => {
 		const cases = data[0];
 		const client = data[1];
-		client.forEach((client) => {
-			if(client.casesId.length > 0) {
-				client.casesId.forEach((caseId) => {
-					cases.filter((singleCase) => {
-						singleCase = singleCase.toObject();
-						if(singleCase.client._id.toString() === client._id.toString() && (singleCase._id.toString() === caseId.toString())) {
-							client.cases.push(singleCase);
+		/* client.forEach((client) => {
+			
+		}); */
+		if(client.casesId.length > 0) {
+			client.casesId.forEach((caseId) => {
+				cases.filter((singleCase) => {
+					singleCase = singleCase.toObject();
+					if(singleCase.client._id.toString() === client._id.toString() && (singleCase._id.toString() === caseId.toString())) {
+						if (singleCase.legalAid !== "Unassigned" && singleCase.legalAid !== null) {
+							delete singleCase.legalAid.password;
+							delete singleCase.legalAid.hashedPassword;
+							client.cases.unshift(singleCase);
+						} else {
+							client.cases.unshift(singleCase);
 						}
-					});
+					}
 				});
-			}
-		});
-		return Promise.all(client);
+			});
+		}
+		return client;
 	}).then((client) => {
+		client = client.toObject();
+		delete client.password;
+		delete client.hashedPassword;
 		res.json(client);
+	});
+});
+
+router.get("/:id/cases", (req, res) => {
+	Case.find({"client._id": req.params.id}, (err, data) => {
+		if(err) {
+			return res.json({
+				status: 500,
+				error: err,
+				message: "Unable to fetch messages"
+			});
+		} else {
+			const cases = [];
+			data.forEach((item) => {
+				item = item.toObject();
+				cases.unshift(item);
+				
+			});
+			cases.forEach((singleCase) => {
+				if(singleCase.legalAid !== "Unassigned" && singleCase.legalAid !== null) {
+					delete singleCase.legalAid.password;
+					delete singleCase.legalAid.hashedPassword;
+				}
+			});
+			res.json(cases);
+		}
+	});
+});
+
+router.get("/:id/profile", (req, res) => {
+	Client.findById(req.params.id, (err, client) => {
+		if(err) {
+			return res.json({
+				status: 500,
+				error: err,
+				message: "Unable to fetch user profile"
+			});
+		} else {
+			client = client.toObject();
+			delete client.casesId;
+			delete client.hashedPassword;
+			delete client.password;
+			delete client.cases;
+			res.json(client);
+		}
 	});
 });
 

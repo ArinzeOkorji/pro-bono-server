@@ -36,15 +36,20 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 var app = (0, _express["default"])();
 var local_db_for_development_url = "mongodb://localhost:27017/pro-bono";
+var mongoDB = process.env.MONGODB_URI || local_db_for_development_url;
 
-_mongoose["default"].connect(process.env.MONODB_URI || local_db_for_development_url, {
+_mongoose["default"].connect(mongoDB, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   useCreateIndex: true,
   useFindAndModify: false
+}).then(function () {
+  console.log("Database Successfully Connected");
+}, function (error) {
+  console.log("Mono Atlas: ".concat(process.env.MONGODB_URI), error);
 });
 
-var port = 3000; // Models start
+var port = process.env.PORT || 3000; // Models start
 
 // Models end
 // Middleware starts

@@ -77,24 +77,25 @@ router.get("/:id", auth.required, (req, res) => {
 		return Promise.all(data);
 	}).then((data) => {
 		const cases = data[0];
-		const legalAids = data[1];
-		legalAids.forEach((legalAid) => {
-			if(legalAid.casesId.length > 0) {
-				legalAid.casesId.forEach((caseId) => {
-					cases.filter((singleCase) => {
-						singleCase = singleCase.toObject();
-						if(singleCase.legalAid !== "Unassigned") {
-							if(singleCase.legalAid._id.toString() === legalAid._id.toString() && (singleCase._id.toString() === caseId.toString())) {
-								legalAid.cases.unshift(singleCase);
-							}
+		const legalAid = data[1];
+		if(legalAid.casesId.length > 0) {
+			legalAid.casesId.forEach((caseId) => {
+				cases.filter((singleCase) => {
+					singleCase = singleCase.toObject();
+					if(singleCase.legalAid !== "Unassigned" && singleCase.legalAid !== null) {
+						if((singleCase.legalAid._id.toString() === legalAid._id.toString()) && (singleCase._id.toString() === caseId.toString())) {
+							legalAid.cases.unshift(singleCase);
 						}
-					});
+					}
 				});
-			}
-		});
-		return Promise.all(legalAids);
-	}).then((legalAids) => {
-		res.json(legalAids);
+			});
+		}
+		return legalAid;
+	}).then((legalAid) => {
+		legalAid = legalAid.toObject();
+		delete legalAid.password;
+		delete legalAid.hashedPassword;
+		res.json(legalAid);
 	});
 });
 

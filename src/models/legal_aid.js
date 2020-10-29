@@ -13,7 +13,7 @@ const saltRounds = 10;
 const LegalAid = new Schema({
 	userType: {
 		type: String,
-		default: "Legal Aid"
+		default: "legal-aid"
 	},
 	firstName: String,
 	lastName: String,

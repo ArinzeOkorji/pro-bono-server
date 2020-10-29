@@ -86,7 +86,7 @@ router.get("/:id", _auth["default"].required, function (req, res) {
         err: err
       });
     } else {
-      res.json(client);
+      return client;
     }
   }).then(function (client) {
     return [Case.find({}).exec(), client];
@@ -98,22 +98,78 @@ router.get("/:id", _auth["default"].required, function (req, res) {
   }).then(function (data) {
     var cases = data[0];
     var client = data[1];
-    client.forEach(function (client) {
-      if (client.casesId.length > 0) {
-        client.casesId.forEach(function (caseId) {
-          cases.filter(function (singleCase) {
-            singleCase = singleCase.toObject();
+    /* client.forEach((client) => {
+    	
+    }); */
 
-            if (singleCase.client._id.toString() === client._id.toString() && singleCase._id.toString() === caseId.toString()) {
-              client.cases.push(singleCase);
+    if (client.casesId.length > 0) {
+      client.casesId.forEach(function (caseId) {
+        cases.filter(function (singleCase) {
+          singleCase = singleCase.toObject();
+
+          if (singleCase.client._id.toString() === client._id.toString() && singleCase._id.toString() === caseId.toString()) {
+            if (singleCase.legalAid !== "Unassigned" && singleCase.legalAid !== null) {
+              delete singleCase.legalAid.password;
+              delete singleCase.legalAid.hashedPassword;
+              client.cases.unshift(singleCase);
+            } else {
+              client.cases.unshift(singleCase);
             }
-          });
+          }
         });
-      }
-    });
-    return Promise.all(client);
+      });
+    }
+
+    return client;
   }).then(function (client) {
+    client = client.toObject();
+    delete client.password;
+    delete client.hashedPassword;
     res.json(client);
+  });
+});
+router.get("/:id/cases", function (req, res) {
+  Case.find({
+    "client._id": req.params.id
+  }, function (err, data) {
+    if (err) {
+      return res.json({
+        status: 500,
+        error: err,
+        message: "Unable to fetch messages"
+      });
+    } else {
+      var cases = [];
+      data.forEach(function (item) {
+        item = item.toObject();
+        cases.unshift(item);
+      });
+      cases.forEach(function (singleCase) {
+        if (singleCase.legalAid !== "Unassigned" && singleCase.legalAid !== null) {
+          delete singleCase.legalAid.password;
+          delete singleCase.legalAid.hashedPassword;
+        }
+      });
+      res.json(cases);
+    }
+  });
+});
+router.get("/:id/profile", function (req, res) {
+  Client.findById(req.params.id, function (err, client) {
+    if (err) {
+      return res.json({
+        status: 500,
+        error: err,
+        message: "Unable to fetch user profile"
+      });
+    } else {
+      client = client.toObject();
+      delete client.casesId;
+      delete client.hashedPassword;
+      delete client.password;
+      delete client.cases;
+      res.json(client);
+    }
   });
 });
 router.put("/close-case/:caseId/client", _auth["default"].required, function (req, res) {
