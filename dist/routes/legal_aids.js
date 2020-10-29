@@ -114,7 +114,7 @@ router.get("/:id", _auth["default"].required, function (req, res) {
     res.json(legalAid);
   });
 });
-router.put("/close-case/:caseId/legal", _auth["default"].required, function (req, res) {
+router.put("/close-case/:caseId", _auth["default"].required, function (req, res) {
   Case.findOneAndUpdate({
     _id: req.params.caseId,
     caseClosed: {

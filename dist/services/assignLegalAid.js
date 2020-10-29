@@ -9,14 +9,29 @@ exports.assignLegalAid = void 0;
 
 var mongoose = _interopRequireWildcard(require("mongoose"));
 
+var _nodemailer = _interopRequireDefault(require("nodemailer"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
 function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function _getRequireWildcardCache() { return cache; }; return cache; }
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") { return { "default": obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj["default"] = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
+/* eslint-disable no-console */
+
+/* eslint-disable no-undef */
 var Cases = mongoose.model("Case");
 var LegalAid = mongoose.model("LegalAid");
 var legalAidIndex;
 var legalAidId;
+
+var transporter = _nodemailer["default"].createTransport({
+  service: "gmail",
+  auth: {
+    user: "probono.legalaids@gmail.com",
+    pass: "lfcjgpcbevodyhju"
+  }
+});
 
 var findAndAssignLegalAid = function findAndAssignLegalAid(newCase, callback) {
   LegalAid.find({
@@ -62,6 +77,19 @@ var findAndAssignLegalAid = function findAndAssignLegalAid(newCase, callback) {
           });
         }
 
+        var mailOptions = {
+          from: "probono.legalaids@gmail.com",
+          to: "".concat(assignedLegalAid.toObject().contact.email),
+          subject: "New Probono case assigned to you",
+          html: "\n\t\t\t\t\t\t<p>Hello ".concat(assignedLegalAid.firstname, ",</p>\n\t\t\t\t\t\t<p>Thank you once again for being a part of our team of legal aids.</p>\n\t\t\t\t\t\t<p>A new case has been assigned to you on Probono!\n\t\t\t\t\t\tWe would love for you to get in touch with your client as soon as possible.\n\t\t\t\t\t\t</p>\n\t\t\t\t\t\t<a href='https://probono.netlify.app'><button>View assigned case</button></a>\n\t\t\t\t\t\t<p>&#128153; The Probono team.</p>\n\t\t\t\t\t\t")
+        };
+        transporter.sendMail(mailOptions, function (error, info) {
+          if (error) {
+            console.log(error);
+          } else {
+            console.log("Email sent: " + info.response);
+          }
+        });
         Cases.findOneAndUpdate({
           _id: newCase._id
         }, {

@@ -99,7 +99,7 @@ router.get("/:id", auth.required, (req, res) => {
 	});
 });
 
-router.put("/close-case/:caseId/legal", auth.required, (req, res) => {
+router.put("/close-case/:caseId", auth.required, (req, res) => {
 	Case.findOneAndUpdate(
 		{_id: req.params.caseId,
 			caseClosed: {$ne: "legal"}
@@ -149,7 +149,6 @@ router.put("/close-case/:caseId/legal", auth.required, (req, res) => {
 							message: "Case unable to set legal aid to unassigned"
 						});
 					}
-					console.log("Reassignig legal aid");
 					assignLegalAid(function(response) {
 						res.json(response);
 					});

@@ -156,7 +156,7 @@ router.get("/:id/profile", (req, res) => {
 	});
 });
 
-router.put("/close-case/:caseId/client", auth.required, (req, res) => {
+router.put("/close-case/:caseId", auth.required, (req, res) => {
 	Case.findOneAndUpdate(
 		{_id: req.params.caseId,
 			caseClosed: {$ne: "client"}

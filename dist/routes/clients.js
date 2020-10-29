@@ -172,7 +172,7 @@ router.get("/:id/profile", function (req, res) {
     }
   });
 });
-router.put("/close-case/:caseId/client", _auth["default"].required, function (req, res) {
+router.put("/close-case/:caseId", _auth["default"].required, function (req, res) {
   Case.findOneAndUpdate({
     _id: req.params.caseId,
     caseClosed: {
