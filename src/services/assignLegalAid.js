@@ -64,7 +64,7 @@ const findAndAssignLegalAid = (newCase, callback) => {
 						to: `${assignedLegalAid.toObject().contact.email}`,
 						subject: "New Probono case assigned to you",
 						html: `
-						<p>Hello ${assignedLegalAid.toObject().firstname},</p>
+						<p>Hello ${assignedLegalAid.toObject().firstName},</p>
 						<p>Thank you once again for being a part of our team of legal aids.</p>
 						<p>A new case has been assigned to you on Probono!
 						We would love for you to get in touch with your client as soon as possible.
