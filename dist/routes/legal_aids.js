@@ -114,6 +114,51 @@ router.get("/:id", _auth["default"].required, function (req, res) {
     res.json(legalAid);
   });
 });
+router.get("/:id/cases", function (req, res) {
+  LegalAid.findById(req.params.id, function (err, legalAids) {
+    if (err) {
+      return res.json({
+        status: 500,
+        message: err
+      });
+    } else {
+      return legalAids;
+    }
+  }).then(function (legalAids) {
+    return [Case.find({}).exec(), legalAids];
+  }).then(function (data) {
+    data[0].then(function (cases) {
+      return [cases, data[0]];
+    });
+    return Promise.all(data);
+  }).then(function (data) {
+    var cases = data[0];
+    var legalAid = data[1];
+
+    if (legalAid.casesId.length > 0) {
+      legalAid.casesId.forEach(function (caseId) {
+        cases.filter(function (singleCase) {
+          singleCase = singleCase.toObject();
+
+          if (singleCase.legalAid !== "Unassigned" && singleCase.legalAid !== null) {
+            if (singleCase.legalAid._id.toString() === legalAid._id.toString() && singleCase._id.toString() === caseId.toString()) {
+              delete singleCase.legalAid.password;
+              delete singleCase.legalAid.hashedPassword;
+              legalAid.cases.unshift(singleCase);
+            }
+          }
+        });
+      });
+    }
+
+    return legalAid;
+  }).then(function (legalAid) {
+    legalAid = legalAid.toObject();
+    delete legalAid.password;
+    delete legalAid.hashedPassword;
+    res.json(legalAid.cases);
+  });
+});
 router.put("/close-case/:caseId", _auth["default"].required, function (req, res) {
   Case.findOneAndUpdate({
     _id: req.params.caseId,
@@ -161,7 +206,6 @@ router.put("/close-case/:caseId", _auth["default"].required, function (req, res)
             });
           }
 
-          console.log("Reassignig legal aid");
           (0, _assignLegalAid.assignLegalAid)(function (response) {
             res.json(response);
           });

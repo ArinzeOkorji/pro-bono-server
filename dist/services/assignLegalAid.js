@@ -81,7 +81,7 @@ var findAndAssignLegalAid = function findAndAssignLegalAid(newCase, callback) {
           from: "probono.legalaids@gmail.com",
           to: "".concat(assignedLegalAid.toObject().contact.email),
           subject: "New Probono case assigned to you",
-          html: "\n\t\t\t\t\t\t<p>Hello ".concat(assignedLegalAid.firstname, ",</p>\n\t\t\t\t\t\t<p>Thank you once again for being a part of our team of legal aids.</p>\n\t\t\t\t\t\t<p>A new case has been assigned to you on Probono!\n\t\t\t\t\t\tWe would love for you to get in touch with your client as soon as possible.\n\t\t\t\t\t\t</p>\n\t\t\t\t\t\t<a href='https://probono.netlify.app'><button>View assigned case</button></a>\n\t\t\t\t\t\t<p>&#128153; The Probono team.</p>\n\t\t\t\t\t\t")
+          html: "\n\t\t\t\t\t\t<p>Hello ".concat(assignedLegalAid.toObject().firstname, ",</p>\n\t\t\t\t\t\t<p>Thank you once again for being a part of our team of legal aids.</p>\n\t\t\t\t\t\t<p>A new case has been assigned to you on Probono!\n\t\t\t\t\t\tWe would love for you to get in touch with your client as soon as possible.\n\t\t\t\t\t\t</p>\n\t\t\t\t\t\t<a href='https://probono.netlify.app'><button>View assigned case</button></a>\n\t\t\t\t\t\t<p>&#128153; The Probono team.</p>\n\t\t\t\t\t\t")
         };
         transporter.sendMail(mailOptions, function (error, info) {
           if (error) {
