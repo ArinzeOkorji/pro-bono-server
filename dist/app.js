@@ -69,7 +69,7 @@ app.use("/api/cases", _cases["default"]);
 app.use("/api/clients", _clients["default"]);
 app.use("/api/login", _login["default"]);
 app.use("/api/signup", _signup["default"]);
-app.use("/api/legal", _legal_aids["default"]);
+app.use("/api/legal-aid", _legal_aids["default"]);
 app.listen(port, function () {
   console.log("App is listening at port: ".concat(port));
 });

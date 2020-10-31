@@ -158,8 +158,7 @@ router.put("/close-case/:caseId", auth.required, (req, res) => {
 	).exec().then((updatedCase) => {
 		if(!updatedCase) {
 			return res.json({
-				err: 500,
-				message: "Legal aid unable to close case"
+				error: "Legal aid unable to close case"
 			});
 		}else {
 			res.json({
@@ -202,6 +201,25 @@ router.put("/close-case/:caseId", auth.required, (req, res) => {
 				});
 			});
 		} 
+	});
+});
+
+router.get("/:id/profile", (req, res) => {
+	LegalAid.findById(req.params.id, (err, legalAid) => {
+		if(err) {
+			return res.json({
+				status: 500,
+				error: err,
+				message: "Unable to fetch user profile"
+			});
+		} else {
+			legalAid = legalAid.toObject();
+			delete legalAid.casesId;
+			delete legalAid.hashedPassword;
+			delete legalAid.password;
+			delete legalAid.cases;
+			res.json(legalAid);
+		}
 	});
 });
 

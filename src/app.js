@@ -48,7 +48,7 @@ app.use("/api/cases", CaseRoute);
 app.use("/api/clients", ClientRoute);
 app.use("/api/login", LoginRoute);
 app.use("/api/signup", SignupRoute);
-app.use("/api/legal", LegalAidRoute);
+app.use("/api/legal-aid", LegalAidRoute);
 
 app.listen(port, () => {
 	console.log(`App is listening at port: ${port}`);
