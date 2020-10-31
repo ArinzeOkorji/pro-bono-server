@@ -172,7 +172,7 @@ router.get("/:id/profile", function (req, res) {
     }
   });
 });
-router.put("/close-case/:caseId", _auth["default"].required, function (req, res) {
+router.put("/close-case/:caseId", _auth["default"].required, function (req, res, next) {
   Case.findOneAndUpdate({
     _id: req.params.caseId,
     caseClosed: {
@@ -184,23 +184,14 @@ router.put("/close-case/:caseId", _auth["default"].required, function (req, res)
     }
   }, {
     "new": true
-  }
-  /* ,
-  (err, updatedCase) => {
-  if(err) {
-  	return res.json({
-  		err: 500,
-  		message: "Client aid unable to close case"
-  	});
-  } else {
-  	return updatedCase;
-  }
-  } */
-  ).exec().then(function (updatedCase) {
+  }).exec().then(function (updatedCase) {
     if (!updatedCase) {
       return res.json({
-        err: 500,
-        message: "Client unable to close case"
+        error: "Client unable to close case"
+      });
+    } else {
+      res.json({
+        message: "Client closed case"
       });
     }
 
@@ -232,13 +223,10 @@ router.put("/close-case/:caseId", _auth["default"].required, function (req, res)
           }
 
           console.log("Reassignig legal aid");
-          (0, _assignLegalAid.assignLegalAid)(function (response) {
-            res.json(response);
+          (0, _assignLegalAid.assignLegalAid)(function (response) {// res.json(response);
           });
         });
       });
-    } else {
-      res.json(updatedCase);
     }
   });
 });

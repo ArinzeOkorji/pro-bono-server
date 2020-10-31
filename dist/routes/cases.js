@@ -11,6 +11,8 @@ var express = _interopRequireWildcard(require("express"));
 
 var mongoose = _interopRequireWildcard(require("mongoose"));
 
+var _nodemailer = _interopRequireDefault(require("nodemailer"));
+
 var _assignLegalAid = require("../services/assignLegalAid");
 
 var _auth = _interopRequireDefault(require("./auth/auth"));
@@ -24,8 +26,16 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 /* eslint-disable no-undef */
 
 /* eslint-disable no-console */
-//const Cases = require("../models/case");
+var transporter = _nodemailer["default"].createTransport({
+  service: "gmail",
+  auth: {
+    user: "probono.legalaids@gmail.com",
+    pass: "lfcjgpcbevodyhju"
+  }
+}); //const Cases = require("../models/case");
 //import { Cases } from "../models/client";
+
+
 var Cases = mongoose.model("Case");
 var Client = mongoose.model("Client");
 var router = express.Router(); // Post a case
@@ -33,6 +43,19 @@ var router = express.Router(); // Post a case
 router.post("/", _auth["default"].required, function (req, res) {
   var newCase = new Cases(req.body);
   newCase.save();
+  var mailOptions = {
+    from: "'Pro bono legal-aids' <probono.legalaids@gmail.com>",
+    to: "".concat(newCase.toObject().client.contact.email),
+    subject: "You have created a new case",
+    html: "\n\t\t<p>Hello ".concat(newCase.toObject().client.firstName, ",</p>\n\t\t<p>Your probono case #").concat(newCase.toObject()._id, " has been created to a legal-aid.</p>\n\t\t<p>Your case would be assigned to te next available legal-aid.</p>\n\t\t<p>Case details:\n\t\t<b>Case date: </b> ").concat(newCase.toObject().date, "\n\t\t<b>Case type: </b> ").concat(newCase.toObject().caseType, "\n\t\t<b>Case location: </b> ").concat(newCase.toObject().location, "\n\t\t<b>Case briefing: </b> ").concat(newCase.toObject().briefing, "\n\t\t</p>\n\t\t<a href='https://probono.netlify.app'><button style='border-radius: 4px; padding: 15px; background-color: #007bff; color: #fff'>View created case</button></a>\n\t\t<p>&#128153; The Probono team.</p>\n\t\t")
+  };
+  transporter.sendMail(mailOptions, function (error, info) {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log("Email sent: " + info.response);
+    }
+  });
   Client.findOneAndUpdate({
     _id: req.body.client._id,
     casesId: {
@@ -84,6 +107,22 @@ router.get("/", function (req, res) {
 
 router.get("/:id", _auth["default"].required, function (req, res) {
   Cases.findById(req.params.id, function (err, cases) {
+    if (err) {
+      return res.json({
+        status: 500,
+        message: err
+      });
+    } else {
+      res.json(cases);
+    }
+  });
+}); // Get single case by user
+
+router.get("/:userId/:caseId", _auth["default"].required, function (req, res) {
+  Cases.findOne({
+    _id: req.params.caseId,
+    "client._id": req.params.userId
+  }, function (err, cases) {
     if (err) {
       return res.json({
         status: 500,

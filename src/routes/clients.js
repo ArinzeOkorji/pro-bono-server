@@ -156,7 +156,7 @@ router.get("/:id/profile", (req, res) => {
 	});
 });
 
-router.put("/close-case/:caseId", auth.required, (req, res) => {
+router.put("/close-case/:caseId", auth.required, (req, res, next) => {
 	Case.findOneAndUpdate(
 		{_id: req.params.caseId,
 			caseClosed: {$ne: "client"}
@@ -168,22 +168,15 @@ router.put("/close-case/:caseId", auth.required, (req, res) => {
 		},
 		{
 			new: true
-		}/* ,
-		(err, updatedCase) => {
-			if(err) {
-				return res.json({
-					err: 500,
-					message: "Client aid unable to close case"
-				});
-			} else {
-				return updatedCase;
-			}
-		} */
+		}
 	).exec().then((updatedCase) => {
 		if(!updatedCase) {
 			return res.json({
-				err: 500,
-				message: "Client unable to close case"
+				error: "Client unable to close case"
+			});
+		}else {
+			res.json({
+				message: "Client closed case"
 			});
 		}
 		if(updatedCase.toObject().caseClosed.length === 2) {
@@ -218,12 +211,10 @@ router.put("/close-case/:caseId", auth.required, (req, res) => {
 					}
 					console.log("Reassignig legal aid");
 					assignLegalAid(function(response) {
-						res.json(response);
+						// res.json(response);
 					});
 				});
 			});
-		} else {
-			res.json(updatedCase);
 		}
 	});
 });

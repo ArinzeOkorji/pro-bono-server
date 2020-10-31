@@ -163,11 +163,11 @@ router.put("/close-case/:caseId", _auth["default"].required, function (req, res)
   Case.findOneAndUpdate({
     _id: req.params.caseId,
     caseClosed: {
-      $ne: "legal"
+      $ne: "legal-aid"
     }
   }, {
     $push: {
-      caseClosed: "legal"
+      caseClosed: "legal-aid"
     }
   }, {
     "new": true
@@ -176,6 +176,10 @@ router.put("/close-case/:caseId", _auth["default"].required, function (req, res)
       return res.json({
         err: 500,
         message: "Legal aid unable to close case"
+      });
+    } else {
+      res.json({
+        message: "Legal closed case"
       });
     }
 
@@ -206,13 +210,10 @@ router.put("/close-case/:caseId", _auth["default"].required, function (req, res)
             });
           }
 
-          (0, _assignLegalAid.assignLegalAid)(function (response) {
-            res.json(response);
+          (0, _assignLegalAid.assignLegalAid)(function (response) {//res.json(response);
           });
         });
       });
-    } else {
-      res.json(updatedCase);
     }
   });
 });

@@ -40,7 +40,7 @@ CasesSchema.add({
 	client: {},
 	date: {
 		type: Date,
-		default: new Date()
+		default: new Date().toDateString()
 	},
 	legalAid: {
 		type: Schema.Types.Mixed,
